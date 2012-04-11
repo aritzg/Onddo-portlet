@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" default-destroy-method="destroy" default-init-method="afterPropertiesSet" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+	<bean id="net.sareweb.onddo.service.PickingLocalService" class="net.sareweb.onddo.service.impl.PickingLocalServiceImpl" />
+	<bean id="net.sareweb.onddo.service.PickingLocalServiceUtil" class="net.sareweb.onddo.service.PickingLocalServiceUtil">
+		<property name="service" ref="net.sareweb.onddo.service.PickingLocalService" />
+	</bean>
+	<bean id="net.sareweb.onddo.service.PickingService" class="net.sareweb.onddo.service.impl.PickingServiceImpl" />
+	<bean id="net.sareweb.onddo.service.PickingServiceUtil" class="net.sareweb.onddo.service.PickingServiceUtil">
+		<property name="service" ref="net.sareweb.onddo.service.PickingService" />
+	</bean>
+	<bean id="net.sareweb.onddo.service.persistence.PickingPersistence" class="net.sareweb.onddo.service.persistence.PickingPersistenceImpl" parent="basePersistence" />
+	<bean id="net.sareweb.onddo.service.UserSettingLocalService" class="net.sareweb.onddo.service.impl.UserSettingLocalServiceImpl" />
+	<bean id="net.sareweb.onddo.service.UserSettingLocalServiceUtil" class="net.sareweb.onddo.service.UserSettingLocalServiceUtil">
+		<property name="service" ref="net.sareweb.onddo.service.UserSettingLocalService" />
+	</bean>
+	<bean id="net.sareweb.onddo.service.UserSettingService" class="net.sareweb.onddo.service.impl.UserSettingServiceImpl" />
+	<bean id="net.sareweb.onddo.service.UserSettingServiceUtil" class="net.sareweb.onddo.service.UserSettingServiceUtil">
+		<property name="service" ref="net.sareweb.onddo.service.UserSettingService" />
+	</bean>
+	<bean id="net.sareweb.onddo.service.persistence.UserSettingPersistence" class="net.sareweb.onddo.service.persistence.UserSettingPersistenceImpl" parent="basePersistence" />
+</beans>

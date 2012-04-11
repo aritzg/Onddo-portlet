@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+
+<entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.0" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_1_0.xsd">
+	<persistence-unit-metadata>
+		<xml-mapping-metadata-complete/>
+		<persistence-unit-defaults>
+			<access>PROPERTY</access>
+		</persistence-unit-defaults>
+	</persistence-unit-metadata>
+	<mapped-superclass class="net.sareweb.onddo.model.impl.PickingModelImpl">
+		<attributes>
+			<id name="pickingId" />
+			<basic name="companyId" />
+			<basic name="userId" />
+			<basic name="createDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="modifiedDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="type">
+				<column name="TYPE_" />
+			</basic>
+			<basic name="lat" />
+			<basic name="lng" />
+			<basic name="moonPhase" />
+			<basic name="weather" />
+			<basic name="temperature" />
+			<basic name="humidity" />
+			<basic name="imgId" />
+			<basic name="imgName" />
+			<transient name="primaryKey" />
+			<transient name="primaryKeyObj" />
+			<transient name="userUuid" />
+		</attributes>
+	</mapped-superclass>
+	<mapped-superclass class="net.sareweb.onddo.model.impl.UserSettingModelImpl">
+		<attributes>
+			<id name="userSettingId" />
+			<basic name="companyId" />
+			<basic name="userId" />
+			<basic name="createDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="modifiedDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="visibilityToFriends" />
+			<basic name="visibilityToOthers" />
+			<basic name="tweetPicking" />
+			<transient name="primaryKey" />
+			<transient name="primaryKeyObj" />
+			<transient name="userUuid" />
+		</attributes>
+	</mapped-superclass>
+	<entity class="net.sareweb.onddo.model.impl.PickingImpl" name="Picking">
+		<table name="Onddo_Picking" />
+		<attributes />
+	</entity>
+	<entity class="net.sareweb.onddo.model.impl.UserSettingImpl" name="UserSetting">
+		<table name="Onddo_UserSetting" />
+		<attributes />
+	</entity>
+</entity-mappings>

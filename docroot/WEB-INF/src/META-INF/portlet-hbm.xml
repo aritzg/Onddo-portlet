@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping default-lazy="false" auto-import="false">
+	<import class="net.sareweb.onddo.model.Picking" />
+	<import class="net.sareweb.onddo.model.UserSetting" />
+	<class name="net.sareweb.onddo.model.impl.PickingImpl" table="Onddo_Picking">
+		<cache usage="read-write" />
+		<id name="pickingId" type="long">
+			<generator class="assigned" />
+		</id>
+		<property name="companyId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="userId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="createDate" type="org.hibernate.type.TimestampType" />
+		<property name="modifiedDate" type="org.hibernate.type.TimestampType" />
+		<property name="type" type="com.liferay.portal.dao.orm.hibernate.StringType" column="type_" />
+		<property name="lat" type="com.liferay.portal.dao.orm.hibernate.DoubleType" />
+		<property name="lng" type="com.liferay.portal.dao.orm.hibernate.DoubleType" />
+		<property name="moonPhase" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="weather" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="temperature" type="com.liferay.portal.dao.orm.hibernate.DoubleType" />
+		<property name="humidity" type="com.liferay.portal.dao.orm.hibernate.DoubleType" />
+		<property name="imgId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="imgName" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+	</class>
+	<class name="net.sareweb.onddo.model.impl.UserSettingImpl" table="Onddo_UserSetting">
+		<cache usage="read-write" />
+		<id name="userSettingId" type="long">
+			<generator class="assigned" />
+		</id>
+		<property name="companyId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="userId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="createDate" type="org.hibernate.type.TimestampType" />
+		<property name="modifiedDate" type="org.hibernate.type.TimestampType" />
+		<property name="visibilityToFriends" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="visibilityToOthers" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="tweetPicking" type="com.liferay.portal.dao.orm.hibernate.BooleanType" />
+	</class>
+</hibernate-mapping>

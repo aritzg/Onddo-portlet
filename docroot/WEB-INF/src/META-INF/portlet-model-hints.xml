@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+
+<model-hints>
+	<model name="net.sareweb.onddo.model.Picking">
+		<field name="pickingId" type="long" />
+		<field name="companyId" type="long" />
+		<field name="userId" type="long" />
+		<field name="createDate" type="Date" />
+		<field name="modifiedDate" type="Date" />
+		<field name="type" type="String" />
+		<field name="lat" type="double" />
+		<field name="lng" type="double" />
+		<field name="moonPhase" type="String" />
+		<field name="weather" type="String" />
+		<field name="temperature" type="double" />
+		<field name="humidity" type="double" />
+		<field name="imgId" type="long" />
+		<field name="imgName" type="String" />
+	</model>
+	<model name="net.sareweb.onddo.model.UserSetting">
+		<field name="userSettingId" type="long" />
+		<field name="companyId" type="long" />
+		<field name="userId" type="long" />
+		<field name="createDate" type="Date" />
+		<field name="modifiedDate" type="Date" />
+		<field name="visibilityToFriends" type="String" />
+		<field name="visibilityToOthers" type="String" />
+		<field name="tweetPicking" type="boolean" />
+	</model>
+</model-hints>

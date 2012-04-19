@@ -37,6 +37,30 @@ public class PickingServiceWrapper implements PickingService,
 		return _pickingService.getPickingById(pickingId);
 	}
 
+	public net.sareweb.onddo.model.Picking addPicking(long companyId,
+		long userId, long createDate, long modifiedDate, java.lang.String type,
+		double lat, double lng, java.lang.String moonPhase,
+		java.lang.String weather, double temperature, double humidity,
+		long imgId, java.lang.String imgName)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return _pickingService.addPicking(companyId, userId, createDate,
+			modifiedDate, type, lat, lng, moonPhase, weather, temperature,
+			humidity, imgId, imgName);
+	}
+
+	public net.sareweb.onddo.model.Picking updatePicking(long pickingId,
+		long companyId, long userId, long createDate, long modifiedDate,
+		java.lang.String type, double lat, double lng,
+		java.lang.String moonPhase, java.lang.String weather,
+		double temperature, double humidity, long imgId,
+		java.lang.String imgName)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _pickingService.updatePicking(pickingId, companyId, userId,
+			createDate, modifiedDate, type, lat, lng, moonPhase, weather,
+			temperature, humidity, imgId, imgName);
+	}
+
 	/**
 	 * @deprecated Renamed to {@link #getWrappedService}
 	 */

@@ -27,6 +27,18 @@ public class PickingServiceClp implements PickingService {
 
 		_getPickingByIdMethodKey0 = new MethodKey(_classLoaderProxy.getClassName(),
 				"getPickingById", long.class);
+
+		_addPickingMethodKey1 = new MethodKey(_classLoaderProxy.getClassName(),
+				"addPicking", long.class, long.class, long.class, long.class,
+				java.lang.String.class, double.class, double.class,
+				java.lang.String.class, java.lang.String.class, double.class,
+				double.class, long.class, java.lang.String.class);
+
+		_updatePickingMethodKey2 = new MethodKey(_classLoaderProxy.getClassName(),
+				"updatePicking", long.class, long.class, long.class,
+				long.class, long.class, java.lang.String.class, double.class,
+				double.class, java.lang.String.class, java.lang.String.class,
+				double.class, double.class, long.class, java.lang.String.class);
 	}
 
 	public net.sareweb.onddo.model.Picking getPickingById(long pickingId)
@@ -61,10 +73,88 @@ public class PickingServiceClp implements PickingService {
 		return (net.sareweb.onddo.model.Picking)ClpSerializer.translateOutput(returnObj);
 	}
 
+	public net.sareweb.onddo.model.Picking addPicking(long companyId,
+		long userId, long createDate, long modifiedDate, java.lang.String type,
+		double lat, double lng, java.lang.String moonPhase,
+		java.lang.String weather, double temperature, double humidity,
+		long imgId, java.lang.String imgName)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		Object returnObj = null;
+
+		MethodHandler methodHandler = new MethodHandler(_addPickingMethodKey1,
+				companyId, userId, createDate, modifiedDate,
+				ClpSerializer.translateInput(type), lat, lng,
+				ClpSerializer.translateInput(moonPhase),
+				ClpSerializer.translateInput(weather), temperature, humidity,
+				imgId, ClpSerializer.translateInput(imgName));
+
+		try {
+			returnObj = _classLoaderProxy.invoke(methodHandler);
+		}
+		catch (Throwable t) {
+			if (t instanceof com.liferay.portal.kernel.exception.SystemException) {
+				throw (com.liferay.portal.kernel.exception.SystemException)t;
+			}
+
+			if (t instanceof RuntimeException) {
+				throw (RuntimeException)t;
+			}
+			else {
+				throw new RuntimeException(t.getClass().getName() +
+					" is not a valid exception");
+			}
+		}
+
+		return (net.sareweb.onddo.model.Picking)ClpSerializer.translateOutput(returnObj);
+	}
+
+	public net.sareweb.onddo.model.Picking updatePicking(long pickingId,
+		long companyId, long userId, long createDate, long modifiedDate,
+		java.lang.String type, double lat, double lng,
+		java.lang.String moonPhase, java.lang.String weather,
+		double temperature, double humidity, long imgId,
+		java.lang.String imgName)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		Object returnObj = null;
+
+		MethodHandler methodHandler = new MethodHandler(_updatePickingMethodKey2,
+				pickingId, companyId, userId, createDate, modifiedDate,
+				ClpSerializer.translateInput(type), lat, lng,
+				ClpSerializer.translateInput(moonPhase),
+				ClpSerializer.translateInput(weather), temperature, humidity,
+				imgId, ClpSerializer.translateInput(imgName));
+
+		try {
+			returnObj = _classLoaderProxy.invoke(methodHandler);
+		}
+		catch (Throwable t) {
+			if (t instanceof com.liferay.portal.kernel.exception.PortalException) {
+				throw (com.liferay.portal.kernel.exception.PortalException)t;
+			}
+
+			if (t instanceof com.liferay.portal.kernel.exception.SystemException) {
+				throw (com.liferay.portal.kernel.exception.SystemException)t;
+			}
+
+			if (t instanceof RuntimeException) {
+				throw (RuntimeException)t;
+			}
+			else {
+				throw new RuntimeException(t.getClass().getName() +
+					" is not a valid exception");
+			}
+		}
+
+		return (net.sareweb.onddo.model.Picking)ClpSerializer.translateOutput(returnObj);
+	}
+
 	public ClassLoaderProxy getClassLoaderProxy() {
 		return _classLoaderProxy;
 	}
 
 	private ClassLoaderProxy _classLoaderProxy;
 	private MethodKey _getPickingByIdMethodKey0;
+	private MethodKey _addPickingMethodKey1;
+	private MethodKey _updatePickingMethodKey2;
 }

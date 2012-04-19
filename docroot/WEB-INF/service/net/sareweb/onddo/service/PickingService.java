@@ -47,4 +47,20 @@ public interface PickingService {
 	public net.sareweb.onddo.model.Picking getPickingById(long pickingId)
 		throws com.liferay.portal.kernel.exception.PortalException,
 			com.liferay.portal.kernel.exception.SystemException;
+
+	public net.sareweb.onddo.model.Picking addPicking(long companyId,
+		long userId, long createDate, long modifiedDate, java.lang.String type,
+		double lat, double lng, java.lang.String moonPhase,
+		java.lang.String weather, double temperature, double humidity,
+		long imgId, java.lang.String imgName)
+		throws com.liferay.portal.kernel.exception.SystemException;
+
+	public net.sareweb.onddo.model.Picking updatePicking(long pickingId,
+		long companyId, long userId, long createDate, long modifiedDate,
+		java.lang.String type, double lat, double lng,
+		java.lang.String moonPhase, java.lang.String weather,
+		double temperature, double humidity, long imgId,
+		java.lang.String imgName)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException;
 }

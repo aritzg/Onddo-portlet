@@ -3,6 +3,8 @@ Liferay.Service.register("Liferay.Service.Onddo", "net.sareweb.onddo.service", "
 Liferay.Service.registerClass(
 	Liferay.Service.Onddo, "Picking",
 	{
-		getPickingById: true
+		getPickingById: true,
+		addPicking: true,
+		updatePicking: true
 	}
 );

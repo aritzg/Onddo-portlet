@@ -44,6 +44,32 @@ public class PickingServiceUtil {
 		return getService().getPickingById(pickingId);
 	}
 
+	public static net.sareweb.onddo.model.Picking addPicking(long companyId,
+		long userId, long createDate, long modifiedDate, java.lang.String type,
+		double lat, double lng, java.lang.String moonPhase,
+		java.lang.String weather, double temperature, double humidity,
+		long imgId, java.lang.String imgName)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService()
+				   .addPicking(companyId, userId, createDate, modifiedDate,
+			type, lat, lng, moonPhase, weather, temperature, humidity, imgId,
+			imgName);
+	}
+
+	public static net.sareweb.onddo.model.Picking updatePicking(
+		long pickingId, long companyId, long userId, long createDate,
+		long modifiedDate, java.lang.String type, double lat, double lng,
+		java.lang.String moonPhase, java.lang.String weather,
+		double temperature, double humidity, long imgId,
+		java.lang.String imgName)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getService()
+				   .updatePicking(pickingId, companyId, userId, createDate,
+			modifiedDate, type, lat, lng, moonPhase, weather, temperature,
+			humidity, imgId, imgName);
+	}
+
 	public static void clearService() {
 		_service = null;
 	}

@@ -14,6 +14,9 @@
 
 package net.sareweb.onddo.service.impl;
 
+import java.util.Date;
+
+import com.liferay.counter.service.CounterLocalServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 
@@ -39,6 +42,42 @@ public class PickingServiceImpl extends PickingServiceBaseImpl {
 	
 	public Picking getPickingById(long pickingId) throws PortalException, SystemException{
 		return PickingLocalServiceUtil.getPicking(pickingId);
+	}
+	
+	public Picking addPicking(long companyId, long userId, long createDate, long modifiedDate, String type, double lat, double lng, String moonPhase, String weather, double temperature, double humidity, long imgId, String imgName) throws SystemException{
+		Picking p = PickingLocalServiceUtil.createPicking(CounterLocalServiceUtil.increment());
+		p.setCompanyId(companyId);
+		p.setUserId(userId);
+		p.setCreateDate(new Date(createDate));
+		p.setModifiedDate(new Date(modifiedDate));
+		p.setType(type);
+		p.setLat(lat);
+		p.setLng(lng);
+		p.setMoonPhase(moonPhase);
+		p.setWeather(weather);
+		p.setTemperature(temperature);
+		p.setHumidity(humidity);
+		p.setImgId(imgId);
+		p.setImgName(imgName);
+		return PickingLocalServiceUtil.addPicking(p);
+	}
+	
+	public Picking updatePicking(long pickingId, long companyId, long userId, long createDate, long modifiedDate, String type, double lat, double lng, String moonPhase, String weather, double temperature, double humidity, long imgId, String imgName) throws PortalException, SystemException {
+		Picking p = PickingLocalServiceUtil.getPicking(pickingId);
+		p.setCompanyId(companyId);
+		p.setUserId(userId);
+		p.setCreateDate(new Date(createDate));
+		p.setModifiedDate(new Date(modifiedDate));
+		p.setType(type);
+		p.setLat(lat);
+		p.setLng(lng);
+		p.setMoonPhase(moonPhase);
+		p.setWeather(weather);
+		p.setTemperature(temperature);
+		p.setHumidity(humidity);
+		p.setImgId(imgId);
+		p.setImgName(imgName);
+		return PickingLocalServiceUtil.updatePicking(p);
 	}
 	
 }

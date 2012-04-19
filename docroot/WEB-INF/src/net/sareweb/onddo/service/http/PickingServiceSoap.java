@@ -79,5 +79,46 @@ public class PickingServiceSoap {
 		}
 	}
 
+	public static net.sareweb.onddo.model.PickingSoap addPicking(
+		long companyId, long userId, long createDate, long modifiedDate,
+		java.lang.String type, double lat, double lng,
+		java.lang.String moonPhase, java.lang.String weather,
+		double temperature, double humidity, long imgId,
+		java.lang.String imgName) throws RemoteException {
+		try {
+			net.sareweb.onddo.model.Picking returnValue = PickingServiceUtil.addPicking(companyId,
+					userId, createDate, modifiedDate, type, lat, lng,
+					moonPhase, weather, temperature, humidity, imgId, imgName);
+
+			return net.sareweb.onddo.model.PickingSoap.toSoapModel(returnValue);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
+	public static net.sareweb.onddo.model.PickingSoap updatePicking(
+		long pickingId, long companyId, long userId, long createDate,
+		long modifiedDate, java.lang.String type, double lat, double lng,
+		java.lang.String moonPhase, java.lang.String weather,
+		double temperature, double humidity, long imgId,
+		java.lang.String imgName) throws RemoteException {
+		try {
+			net.sareweb.onddo.model.Picking returnValue = PickingServiceUtil.updatePicking(pickingId,
+					companyId, userId, createDate, modifiedDate, type, lat,
+					lng, moonPhase, weather, temperature, humidity, imgId,
+					imgName);
+
+			return net.sareweb.onddo.model.PickingSoap.toSoapModel(returnValue);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
 	private static Log _log = LogFactoryUtil.getLog(PickingServiceSoap.class);
 }

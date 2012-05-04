@@ -5,6 +5,8 @@ Liferay.Service.registerClass(
 	{
 		getPickingById: true,
 		addPicking: true,
-		updatePicking: true
+		updatePicking: true,
+		deletePickingById: true,
+		findByUserId: true
 	}
 );

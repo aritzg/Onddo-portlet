@@ -120,5 +120,31 @@ public class PickingServiceSoap {
 		}
 	}
 
+	public static void deletePickingById(long pickingId)
+		throws RemoteException {
+		try {
+			PickingServiceUtil.deletePickingById(pickingId);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
+	public static net.sareweb.onddo.model.Picking[] findByUserId(long userId)
+		throws RemoteException {
+		try {
+			java.util.List<net.sareweb.onddo.model.Picking> returnValue = PickingServiceUtil.findByUserId(userId);
+
+			return returnValue.toArray(new net.sareweb.onddo.model.Picking[returnValue.size()]);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
 	private static Log _log = LogFactoryUtil.getLog(PickingServiceSoap.class);
 }

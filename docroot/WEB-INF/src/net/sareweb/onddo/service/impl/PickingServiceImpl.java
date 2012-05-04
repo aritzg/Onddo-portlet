@@ -15,6 +15,7 @@
 package net.sareweb.onddo.service.impl;
 
 import java.util.Date;
+import java.util.List;
 
 import com.liferay.counter.service.CounterLocalServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -78,6 +79,14 @@ public class PickingServiceImpl extends PickingServiceBaseImpl {
 		p.setImgId(imgId);
 		p.setImgName(imgName);
 		return PickingLocalServiceUtil.updatePicking(p);
+	}
+	
+	public void deletePickingById(long pickingId) throws PortalException, SystemException{
+		PickingLocalServiceUtil.deletePicking(pickingId);
+	}
+	
+	public List<Picking> findByUserId(long userId){
+		return findByUserId(userId);
 	}
 	
 }

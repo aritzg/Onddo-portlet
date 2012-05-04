@@ -39,6 +39,12 @@ public class PickingServiceClp implements PickingService {
 				long.class, long.class, java.lang.String.class, double.class,
 				double.class, java.lang.String.class, java.lang.String.class,
 				double.class, double.class, long.class, java.lang.String.class);
+
+		_deletePickingByIdMethodKey3 = new MethodKey(_classLoaderProxy.getClassName(),
+				"deletePickingById", long.class);
+
+		_findByUserIdMethodKey4 = new MethodKey(_classLoaderProxy.getClassName(),
+				"findByUserId", long.class);
 	}
 
 	public net.sareweb.onddo.model.Picking getPickingById(long pickingId)
@@ -149,6 +155,57 @@ public class PickingServiceClp implements PickingService {
 		return (net.sareweb.onddo.model.Picking)ClpSerializer.translateOutput(returnObj);
 	}
 
+	public void deletePickingById(long pickingId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		MethodHandler methodHandler = new MethodHandler(_deletePickingByIdMethodKey3,
+				pickingId);
+
+		try {
+			_classLoaderProxy.invoke(methodHandler);
+		}
+		catch (Throwable t) {
+			if (t instanceof com.liferay.portal.kernel.exception.PortalException) {
+				throw (com.liferay.portal.kernel.exception.PortalException)t;
+			}
+
+			if (t instanceof com.liferay.portal.kernel.exception.SystemException) {
+				throw (com.liferay.portal.kernel.exception.SystemException)t;
+			}
+
+			if (t instanceof RuntimeException) {
+				throw (RuntimeException)t;
+			}
+			else {
+				throw new RuntimeException(t.getClass().getName() +
+					" is not a valid exception");
+			}
+		}
+	}
+
+	public java.util.List<net.sareweb.onddo.model.Picking> findByUserId(
+		long userId) {
+		Object returnObj = null;
+
+		MethodHandler methodHandler = new MethodHandler(_findByUserIdMethodKey4,
+				userId);
+
+		try {
+			returnObj = _classLoaderProxy.invoke(methodHandler);
+		}
+		catch (Throwable t) {
+			if (t instanceof RuntimeException) {
+				throw (RuntimeException)t;
+			}
+			else {
+				throw new RuntimeException(t.getClass().getName() +
+					" is not a valid exception");
+			}
+		}
+
+		return (java.util.List<net.sareweb.onddo.model.Picking>)ClpSerializer.translateOutput(returnObj);
+	}
+
 	public ClassLoaderProxy getClassLoaderProxy() {
 		return _classLoaderProxy;
 	}
@@ -157,4 +214,6 @@ public class PickingServiceClp implements PickingService {
 	private MethodKey _getPickingByIdMethodKey0;
 	private MethodKey _addPickingMethodKey1;
 	private MethodKey _updatePickingMethodKey2;
+	private MethodKey _deletePickingByIdMethodKey3;
+	private MethodKey _findByUserIdMethodKey4;
 }

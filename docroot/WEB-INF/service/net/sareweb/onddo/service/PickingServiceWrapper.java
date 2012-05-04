@@ -61,6 +61,17 @@ public class PickingServiceWrapper implements PickingService,
 			temperature, humidity, imgId, imgName);
 	}
 
+	public void deletePickingById(long pickingId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		_pickingService.deletePickingById(pickingId);
+	}
+
+	public java.util.List<net.sareweb.onddo.model.Picking> findByUserId(
+		long userId) {
+		return _pickingService.findByUserId(userId);
+	}
+
 	/**
 	 * @deprecated Renamed to {@link #getWrappedService}
 	 */

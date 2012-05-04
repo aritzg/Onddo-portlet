@@ -70,6 +70,17 @@ public class PickingServiceUtil {
 			humidity, imgId, imgName);
 	}
 
+	public static void deletePickingById(long pickingId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		getService().deletePickingById(pickingId);
+	}
+
+	public static java.util.List<net.sareweb.onddo.model.Picking> findByUserId(
+		long userId) {
+		return getService().findByUserId(userId);
+	}
+
 	public static void clearService() {
 		_service = null;
 	}

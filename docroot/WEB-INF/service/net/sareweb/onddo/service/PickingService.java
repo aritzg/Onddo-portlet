@@ -63,4 +63,11 @@ public interface PickingService {
 		java.lang.String imgName)
 		throws com.liferay.portal.kernel.exception.PortalException,
 			com.liferay.portal.kernel.exception.SystemException;
+
+	public void deletePickingById(long pickingId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException;
+
+	public java.util.List<net.sareweb.onddo.model.Picking> findByUserId(
+		long userId);
 }

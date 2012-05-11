@@ -181,12 +181,7 @@ public class PickingClp extends BaseModelImpl<Picking> implements Picking {
 	}
 
 	public void persist() throws SystemException {
-		if (this.isNew()) {
-			PickingLocalServiceUtil.addPicking(this);
-		}
-		else {
-			PickingLocalServiceUtil.updatePicking(this);
-		}
+		PickingLocalServiceUtil.updatePicking(this);
 	}
 
 	@Override

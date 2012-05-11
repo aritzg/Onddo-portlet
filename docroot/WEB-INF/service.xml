@@ -35,7 +35,7 @@
 
 		<!-- Finder methods -->
 
-		<finder name="UserId" return-type="Picking" unique="true">
+		<finder name="UserId" return-type="Collection">
 			<finder-column name="userId" />
 		</finder>
 	</entity>

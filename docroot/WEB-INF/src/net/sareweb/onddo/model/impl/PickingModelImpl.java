@@ -224,8 +224,6 @@ public class PickingModelImpl extends BaseModelImpl<Picking>
 	}
 
 	public void setCreateDate(Date createDate) {
-		_columnBitmask = -1L;
-
 		_createDate = createDate;
 	}
 

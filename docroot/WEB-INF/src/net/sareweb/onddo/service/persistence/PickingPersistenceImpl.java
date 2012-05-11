@@ -77,9 +77,19 @@ public class PickingPersistenceImpl extends BasePersistenceImpl<Picking>
 		".List1";
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION = FINDER_CLASS_NAME_ENTITY +
 		".List2";
-	public static final FinderPath FINDER_PATH_FETCH_BY_USERID = new FinderPath(PickingModelImpl.ENTITY_CACHE_ENABLED,
+	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_USERID = new FinderPath(PickingModelImpl.ENTITY_CACHE_ENABLED,
 			PickingModelImpl.FINDER_CACHE_ENABLED, PickingImpl.class,
-			FINDER_CLASS_NAME_ENTITY, "fetchByUserId",
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUserId",
+			new String[] {
+				Long.class.getName(),
+				
+			"java.lang.Integer", "java.lang.Integer",
+				"com.liferay.portal.kernel.util.OrderByComparator"
+			});
+	public static final FinderPath FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_USERID =
+		new FinderPath(PickingModelImpl.ENTITY_CACHE_ENABLED,
+			PickingModelImpl.FINDER_CACHE_ENABLED, PickingImpl.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByUserId",
 			new String[] { Long.class.getName() },
 			PickingModelImpl.USERID_COLUMN_BITMASK);
 	public static final FinderPath FINDER_PATH_COUNT_BY_USERID = new FinderPath(PickingModelImpl.ENTITY_CACHE_ENABLED,
@@ -104,9 +114,6 @@ public class PickingPersistenceImpl extends BasePersistenceImpl<Picking>
 	public void cacheResult(Picking picking) {
 		EntityCacheUtil.putResult(PickingModelImpl.ENTITY_CACHE_ENABLED,
 			PickingImpl.class, picking.getPrimaryKey(), picking);
-
-		FinderCacheUtil.putResult(FINDER_PATH_FETCH_BY_USERID,
-			new Object[] { Long.valueOf(picking.getUserId()) }, picking);
 
 		picking.resetOriginalValues();
 	}
@@ -163,26 +170,6 @@ public class PickingPersistenceImpl extends BasePersistenceImpl<Picking>
 
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
-
-		clearUniqueFindersCache(picking);
-	}
-
-	@Override
-	public void clearCache(List<Picking> pickings) {
-		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
-		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
-
-		for (Picking picking : pickings) {
-			EntityCacheUtil.removeResult(PickingModelImpl.ENTITY_CACHE_ENABLED,
-				PickingImpl.class, picking.getPrimaryKey());
-
-			clearUniqueFindersCache(picking);
-		}
-	}
-
-	protected void clearUniqueFindersCache(Picking picking) {
-		FinderCacheUtil.removeResult(FINDER_PATH_FETCH_BY_USERID,
-			new Object[] { Long.valueOf(picking.getUserId()) });
 	}
 
 	/**
@@ -203,6 +190,20 @@ public class PickingPersistenceImpl extends BasePersistenceImpl<Picking>
 	/**
 	 * Removes the picking with the primary key from the database. Also notifies the appropriate model listeners.
 	 *
+	 * @param primaryKey the primary key of the picking
+	 * @return the picking that was removed
+	 * @throws com.liferay.portal.NoSuchModelException if a picking with the primary key could not be found
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public Picking remove(Serializable primaryKey)
+		throws NoSuchModelException, SystemException {
+		return remove(((Long)primaryKey).longValue());
+	}
+
+	/**
+	 * Removes the picking with the primary key from the database. Also notifies the appropriate model listeners.
+	 *
 	 * @param pickingId the primary key of the picking
 	 * @return the picking that was removed
 	 * @throws net.sareweb.onddo.NoSuchPickingException if a picking with the primary key could not be found
@@ -210,37 +211,24 @@ public class PickingPersistenceImpl extends BasePersistenceImpl<Picking>
 	 */
 	public Picking remove(long pickingId)
 		throws NoSuchPickingException, SystemException {
-		return remove(Long.valueOf(pickingId));
-	}
-
-	/**
-	 * Removes the picking with the primary key from the database. Also notifies the appropriate model listeners.
-	 *
-	 * @param primaryKey the primary key of the picking
-	 * @return the picking that was removed
-	 * @throws net.sareweb.onddo.NoSuchPickingException if a picking with the primary key could not be found
-	 * @throws SystemException if a system exception occurred
-	 */
-	@Override
-	public Picking remove(Serializable primaryKey)
-		throws NoSuchPickingException, SystemException {
 		Session session = null;
 
 		try {
 			session = openSession();
 
-			Picking picking = (Picking)session.get(PickingImpl.class, primaryKey);
+			Picking picking = (Picking)session.get(PickingImpl.class,
+					Long.valueOf(pickingId));
 
 			if (picking == null) {
 				if (_log.isWarnEnabled()) {
-					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + pickingId);
 				}
 
 				throw new NoSuchPickingException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
-					primaryKey);
+					pickingId);
 			}
 
-			return remove(picking);
+			return pickingPersistence.remove(picking);
 		}
 		catch (NoSuchPickingException nsee) {
 			throw nsee;
@@ -251,6 +239,18 @@ public class PickingPersistenceImpl extends BasePersistenceImpl<Picking>
 		finally {
 			closeSession(session);
 		}
+	}
+
+	/**
+	 * Removes the picking from the database. Also notifies the appropriate model listeners.
+	 *
+	 * @param picking the picking
+	 * @return the picking that was removed
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public Picking remove(Picking picking) throws SystemException {
+		return super.remove(picking);
 	}
 
 	@Override
@@ -271,7 +271,11 @@ public class PickingPersistenceImpl extends BasePersistenceImpl<Picking>
 			closeSession(session);
 		}
 
-		clearCache(picking);
+		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
+		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
+
+		EntityCacheUtil.removeResult(PickingModelImpl.ENTITY_CACHE_ENABLED,
+			PickingImpl.class, picking.getPrimaryKey());
 
 		return picking;
 	}
@@ -307,27 +311,27 @@ public class PickingPersistenceImpl extends BasePersistenceImpl<Picking>
 			FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 		}
 
-		EntityCacheUtil.putResult(PickingModelImpl.ENTITY_CACHE_ENABLED,
-			PickingImpl.class, picking.getPrimaryKey(), picking);
-
-		if (isNew) {
-			FinderCacheUtil.putResult(FINDER_PATH_FETCH_BY_USERID,
-				new Object[] { Long.valueOf(picking.getUserId()) }, picking);
-		}
 		else {
 			if ((pickingModelImpl.getColumnBitmask() &
-					FINDER_PATH_FETCH_BY_USERID.getColumnBitmask()) != 0) {
+					FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_USERID.getColumnBitmask()) != 0) {
 				Object[] args = new Object[] {
 						Long.valueOf(pickingModelImpl.getOriginalUserId())
 					};
 
 				FinderCacheUtil.removeResult(FINDER_PATH_COUNT_BY_USERID, args);
-				FinderCacheUtil.removeResult(FINDER_PATH_FETCH_BY_USERID, args);
+				FinderCacheUtil.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_USERID,
+					args);
 
-				FinderCacheUtil.putResult(FINDER_PATH_FETCH_BY_USERID,
-					new Object[] { Long.valueOf(picking.getUserId()) }, picking);
+				args = new Object[] { Long.valueOf(pickingModelImpl.getUserId()) };
+
+				FinderCacheUtil.removeResult(FINDER_PATH_COUNT_BY_USERID, args);
+				FinderCacheUtil.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_USERID,
+					args);
 			}
 		}
+
+		EntityCacheUtil.putResult(PickingModelImpl.ENTITY_CACHE_ENABLED,
+			PickingImpl.class, picking.getPrimaryKey(), picking);
 
 		return picking;
 	}
@@ -459,75 +463,89 @@ public class PickingPersistenceImpl extends BasePersistenceImpl<Picking>
 	}
 
 	/**
-	 * Returns the picking where userId = &#63; or throws a {@link net.sareweb.onddo.NoSuchPickingException} if it could not be found.
+	 * Returns all the pickings where userId = &#63;.
 	 *
 	 * @param userId the user ID
-	 * @return the matching picking
-	 * @throws net.sareweb.onddo.NoSuchPickingException if a matching picking could not be found
+	 * @return the matching pickings
 	 * @throws SystemException if a system exception occurred
 	 */
-	public Picking findByUserId(long userId)
-		throws NoSuchPickingException, SystemException {
-		Picking picking = fetchByUserId(userId);
-
-		if (picking == null) {
-			StringBundler msg = new StringBundler(4);
-
-			msg.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-			msg.append("userId=");
-			msg.append(userId);
-
-			msg.append(StringPool.CLOSE_CURLY_BRACE);
-
-			if (_log.isWarnEnabled()) {
-				_log.warn(msg.toString());
-			}
-
-			throw new NoSuchPickingException(msg.toString());
-		}
-
-		return picking;
+	public List<Picking> findByUserId(long userId) throws SystemException {
+		return findByUserId(userId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
 	}
 
 	/**
-	 * Returns the picking where userId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 * Returns a range of all the pickings where userId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set.
+	 * </p>
 	 *
 	 * @param userId the user ID
-	 * @return the matching picking, or <code>null</code> if a matching picking could not be found
+	 * @param start the lower bound of the range of pickings
+	 * @param end the upper bound of the range of pickings (not inclusive)
+	 * @return the range of matching pickings
 	 * @throws SystemException if a system exception occurred
 	 */
-	public Picking fetchByUserId(long userId) throws SystemException {
-		return fetchByUserId(userId, true);
-	}
-
-	/**
-	 * Returns the picking where userId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
-	 *
-	 * @param userId the user ID
-	 * @param retrieveFromCache whether to use the finder cache
-	 * @return the matching picking, or <code>null</code> if a matching picking could not be found
-	 * @throws SystemException if a system exception occurred
-	 */
-	public Picking fetchByUserId(long userId, boolean retrieveFromCache)
+	public List<Picking> findByUserId(long userId, int start, int end)
 		throws SystemException {
-		Object[] finderArgs = new Object[] { userId };
+		return findByUserId(userId, start, end, null);
+	}
 
-		Object result = null;
+	/**
+	 * Returns an ordered range of all the pickings where userId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set.
+	 * </p>
+	 *
+	 * @param userId the user ID
+	 * @param start the lower bound of the range of pickings
+	 * @param end the upper bound of the range of pickings (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching pickings
+	 * @throws SystemException if a system exception occurred
+	 */
+	public List<Picking> findByUserId(long userId, int start, int end,
+		OrderByComparator orderByComparator) throws SystemException {
+		FinderPath finderPath = null;
+		Object[] finderArgs = null;
 
-		if (retrieveFromCache) {
-			result = FinderCacheUtil.getResult(FINDER_PATH_FETCH_BY_USERID,
-					finderArgs, this);
+		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
+				(orderByComparator == null)) {
+			finderPath = FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_USERID;
+			finderArgs = new Object[] { userId };
+		}
+		else {
+			finderPath = FINDER_PATH_WITH_PAGINATION_FIND_BY_USERID;
+			finderArgs = new Object[] { userId, start, end, orderByComparator };
 		}
 
-		if (result == null) {
-			StringBundler query = new StringBundler(3);
+		List<Picking> list = (List<Picking>)FinderCacheUtil.getResult(finderPath,
+				finderArgs, this);
+
+		if (list == null) {
+			StringBundler query = null;
+
+			if (orderByComparator != null) {
+				query = new StringBundler(3 +
+						(orderByComparator.getOrderByFields().length * 3));
+			}
+			else {
+				query = new StringBundler(3);
+			}
 
 			query.append(_SQL_SELECT_PICKING_WHERE);
 
 			query.append(_FINDER_COLUMN_USERID_USERID_2);
 
-			query.append(PickingModelImpl.ORDER_BY_JPQL);
+			if (orderByComparator != null) {
+				appendOrderByComparator(query, _ORDER_BY_ENTITY_ALIAS,
+					orderByComparator);
+			}
+
+			else {
+				query.append(PickingModelImpl.ORDER_BY_JPQL);
+			}
 
 			String sql = query.toString();
 
@@ -542,48 +560,247 @@ public class PickingPersistenceImpl extends BasePersistenceImpl<Picking>
 
 				qPos.add(userId);
 
-				List<Picking> list = q.list();
-
-				result = list;
-
-				Picking picking = null;
-
-				if (list.isEmpty()) {
-					FinderCacheUtil.putResult(FINDER_PATH_FETCH_BY_USERID,
-						finderArgs, list);
-				}
-				else {
-					picking = list.get(0);
-
-					cacheResult(picking);
-
-					if ((picking.getUserId() != userId)) {
-						FinderCacheUtil.putResult(FINDER_PATH_FETCH_BY_USERID,
-							finderArgs, picking);
-					}
-				}
-
-				return picking;
+				list = (List<Picking>)QueryUtil.list(q, getDialect(), start, end);
 			}
 			catch (Exception e) {
 				throw processException(e);
 			}
 			finally {
-				if (result == null) {
-					FinderCacheUtil.removeResult(FINDER_PATH_FETCH_BY_USERID,
-						finderArgs);
+				if (list == null) {
+					FinderCacheUtil.removeResult(finderPath, finderArgs);
+				}
+				else {
+					cacheResult(list);
+
+					FinderCacheUtil.putResult(finderPath, finderArgs, list);
 				}
 
 				closeSession(session);
 			}
 		}
+
+		return list;
+	}
+
+	/**
+	 * Returns the first picking in the ordered set where userId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set.
+	 * </p>
+	 *
+	 * @param userId the user ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching picking
+	 * @throws net.sareweb.onddo.NoSuchPickingException if a matching picking could not be found
+	 * @throws SystemException if a system exception occurred
+	 */
+	public Picking findByUserId_First(long userId,
+		OrderByComparator orderByComparator)
+		throws NoSuchPickingException, SystemException {
+		List<Picking> list = findByUserId(userId, 0, 1, orderByComparator);
+
+		if (list.isEmpty()) {
+			StringBundler msg = new StringBundler(4);
+
+			msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+			msg.append("userId=");
+			msg.append(userId);
+
+			msg.append(StringPool.CLOSE_CURLY_BRACE);
+
+			throw new NoSuchPickingException(msg.toString());
+		}
 		else {
-			if (result instanceof List<?>) {
-				return null;
+			return list.get(0);
+		}
+	}
+
+	/**
+	 * Returns the last picking in the ordered set where userId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set.
+	 * </p>
+	 *
+	 * @param userId the user ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching picking
+	 * @throws net.sareweb.onddo.NoSuchPickingException if a matching picking could not be found
+	 * @throws SystemException if a system exception occurred
+	 */
+	public Picking findByUserId_Last(long userId,
+		OrderByComparator orderByComparator)
+		throws NoSuchPickingException, SystemException {
+		int count = countByUserId(userId);
+
+		List<Picking> list = findByUserId(userId, count - 1, count,
+				orderByComparator);
+
+		if (list.isEmpty()) {
+			StringBundler msg = new StringBundler(4);
+
+			msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+			msg.append("userId=");
+			msg.append(userId);
+
+			msg.append(StringPool.CLOSE_CURLY_BRACE);
+
+			throw new NoSuchPickingException(msg.toString());
+		}
+		else {
+			return list.get(0);
+		}
+	}
+
+	/**
+	 * Returns the pickings before and after the current picking in the ordered set where userId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set.
+	 * </p>
+	 *
+	 * @param pickingId the primary key of the current picking
+	 * @param userId the user ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next picking
+	 * @throws net.sareweb.onddo.NoSuchPickingException if a picking with the primary key could not be found
+	 * @throws SystemException if a system exception occurred
+	 */
+	public Picking[] findByUserId_PrevAndNext(long pickingId, long userId,
+		OrderByComparator orderByComparator)
+		throws NoSuchPickingException, SystemException {
+		Picking picking = findByPrimaryKey(pickingId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			Picking[] array = new PickingImpl[3];
+
+			array[0] = getByUserId_PrevAndNext(session, picking, userId,
+					orderByComparator, true);
+
+			array[1] = picking;
+
+			array[2] = getByUserId_PrevAndNext(session, picking, userId,
+					orderByComparator, false);
+
+			return array;
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	protected Picking getByUserId_PrevAndNext(Session session, Picking picking,
+		long userId, OrderByComparator orderByComparator, boolean previous) {
+		StringBundler query = null;
+
+		if (orderByComparator != null) {
+			query = new StringBundler(6 +
+					(orderByComparator.getOrderByFields().length * 6));
+		}
+		else {
+			query = new StringBundler(3);
+		}
+
+		query.append(_SQL_SELECT_PICKING_WHERE);
+
+		query.append(_FINDER_COLUMN_USERID_USERID_2);
+
+		if (orderByComparator != null) {
+			String[] orderByConditionFields = orderByComparator.getOrderByConditionFields();
+
+			if (orderByConditionFields.length > 0) {
+				query.append(WHERE_AND);
 			}
-			else {
-				return (Picking)result;
+
+			for (int i = 0; i < orderByConditionFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByConditionFields[i]);
+
+				if ((i + 1) < orderByConditionFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN_HAS_NEXT);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN);
+					}
+				}
 			}
+
+			query.append(ORDER_BY_CLAUSE);
+
+			String[] orderByFields = orderByComparator.getOrderByFields();
+
+			for (int i = 0; i < orderByFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByFields[i]);
+
+				if ((i + 1) < orderByFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC_HAS_NEXT);
+					}
+					else {
+						query.append(ORDER_BY_DESC_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC);
+					}
+					else {
+						query.append(ORDER_BY_DESC);
+					}
+				}
+			}
+		}
+
+		else {
+			query.append(PickingModelImpl.ORDER_BY_JPQL);
+		}
+
+		String sql = query.toString();
+
+		Query q = session.createQuery(sql);
+
+		q.setFirstResult(0);
+		q.setMaxResults(2);
+
+		QueryPos qPos = QueryPos.getInstance(q);
+
+		qPos.add(userId);
+
+		if (orderByComparator != null) {
+			Object[] values = orderByComparator.getOrderByConditionValues(picking);
+
+			for (Object value : values) {
+				qPos.add(value);
+			}
+		}
+
+		List<Picking> list = q.list();
+
+		if (list.size() == 2) {
+			return list.get(1);
+		}
+		else {
+			return null;
 		}
 	}
 
@@ -702,16 +919,15 @@ public class PickingPersistenceImpl extends BasePersistenceImpl<Picking>
 	}
 
 	/**
-	 * Removes the picking where userId = &#63; from the database.
+	 * Removes all the pickings where userId = &#63; from the database.
 	 *
 	 * @param userId the user ID
 	 * @throws SystemException if a system exception occurred
 	 */
-	public void removeByUserId(long userId)
-		throws NoSuchPickingException, SystemException {
-		Picking picking = findByUserId(userId);
-
-		remove(picking);
+	public void removeByUserId(long userId) throws SystemException {
+		for (Picking picking : findByUserId(userId)) {
+			pickingPersistence.remove(picking);
+		}
 	}
 
 	/**
@@ -721,7 +937,7 @@ public class PickingPersistenceImpl extends BasePersistenceImpl<Picking>
 	 */
 	public void removeAll() throws SystemException {
 		for (Picking picking : findAll()) {
-			remove(picking);
+			pickingPersistence.remove(picking);
 		}
 	}
 

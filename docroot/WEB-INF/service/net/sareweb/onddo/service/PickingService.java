@@ -69,5 +69,7 @@ public interface PickingService {
 			com.liferay.portal.kernel.exception.SystemException;
 
 	public java.util.List<net.sareweb.onddo.model.Picking> findByUserId(
-		long userId);
+		long userId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException;
 }

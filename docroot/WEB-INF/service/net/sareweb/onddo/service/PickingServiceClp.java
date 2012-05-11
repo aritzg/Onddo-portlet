@@ -184,7 +184,9 @@ public class PickingServiceClp implements PickingService {
 	}
 
 	public java.util.List<net.sareweb.onddo.model.Picking> findByUserId(
-		long userId) {
+		long userId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		Object returnObj = null;
 
 		MethodHandler methodHandler = new MethodHandler(_findByUserIdMethodKey4,
@@ -194,6 +196,14 @@ public class PickingServiceClp implements PickingService {
 			returnObj = _classLoaderProxy.invoke(methodHandler);
 		}
 		catch (Throwable t) {
+			if (t instanceof com.liferay.portal.kernel.exception.PortalException) {
+				throw (com.liferay.portal.kernel.exception.PortalException)t;
+			}
+
+			if (t instanceof com.liferay.portal.kernel.exception.SystemException) {
+				throw (com.liferay.portal.kernel.exception.SystemException)t;
+			}
+
 			if (t instanceof RuntimeException) {
 				throw (RuntimeException)t;
 			}

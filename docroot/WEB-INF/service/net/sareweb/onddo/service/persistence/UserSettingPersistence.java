@@ -14,6 +14,7 @@
 
 package net.sareweb.onddo.service.persistence;
 
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.service.persistence.BasePersistence;
 
 import net.sareweb.onddo.model.UserSetting;
@@ -213,4 +214,7 @@ public interface UserSettingPersistence extends BasePersistence<UserSetting> {
 	*/
 	public int countAll()
 		throws com.liferay.portal.kernel.exception.SystemException;
+
+	public UserSetting remove(UserSetting userSetting)
+		throws SystemException;
 }

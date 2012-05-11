@@ -138,12 +138,7 @@ public class UserSettingClp extends BaseModelImpl<UserSetting>
 	}
 
 	public void persist() throws SystemException {
-		if (this.isNew()) {
-			UserSettingLocalServiceUtil.addUserSetting(this);
-		}
-		else {
-			UserSettingLocalServiceUtil.updateUserSetting(this);
-		}
+		UserSettingLocalServiceUtil.updateUserSetting(this);
 	}
 
 	@Override

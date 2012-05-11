@@ -39,11 +39,6 @@ public abstract class UserSettingBaseImpl extends UserSettingModelImpl
 	 * Never modify or reference this class directly. All methods that expect a user setting model instance should use the {@link UserSetting} interface instead.
 	 */
 	public void persist() throws SystemException {
-		if (this.isNew()) {
-			UserSettingLocalServiceUtil.addUserSetting(this);
-		}
-		else {
-			UserSettingLocalServiceUtil.updateUserSetting(this);
-		}
+		UserSettingLocalServiceUtil.updateUserSetting(this);
 	}
 }

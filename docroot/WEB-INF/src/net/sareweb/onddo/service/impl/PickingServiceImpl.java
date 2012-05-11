@@ -85,8 +85,8 @@ public class PickingServiceImpl extends PickingServiceBaseImpl {
 		PickingLocalServiceUtil.deletePicking(pickingId);
 	}
 	
-	public List<Picking> findByUserId(long userId){
-		return findByUserId(userId);
+	public List<Picking> findByUserId(long userId) throws PortalException, SystemException{
+		return pickingPersistence.findByUserId(userId);
 	}
 	
 }

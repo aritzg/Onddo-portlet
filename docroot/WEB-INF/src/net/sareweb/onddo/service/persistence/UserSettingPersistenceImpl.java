@@ -164,23 +164,6 @@ public class UserSettingPersistenceImpl extends BasePersistenceImpl<UserSetting>
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 
-		clearUniqueFindersCache(userSetting);
-	}
-
-	@Override
-	public void clearCache(List<UserSetting> userSettings) {
-		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
-		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
-
-		for (UserSetting userSetting : userSettings) {
-			EntityCacheUtil.removeResult(UserSettingModelImpl.ENTITY_CACHE_ENABLED,
-				UserSettingImpl.class, userSetting.getPrimaryKey());
-
-			clearUniqueFindersCache(userSetting);
-		}
-	}
-
-	protected void clearUniqueFindersCache(UserSetting userSetting) {
 		FinderCacheUtil.removeResult(FINDER_PATH_FETCH_BY_USERID,
 			new Object[] { Long.valueOf(userSetting.getUserId()) });
 	}
@@ -203,6 +186,20 @@ public class UserSettingPersistenceImpl extends BasePersistenceImpl<UserSetting>
 	/**
 	 * Removes the user setting with the primary key from the database. Also notifies the appropriate model listeners.
 	 *
+	 * @param primaryKey the primary key of the user setting
+	 * @return the user setting that was removed
+	 * @throws com.liferay.portal.NoSuchModelException if a user setting with the primary key could not be found
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public UserSetting remove(Serializable primaryKey)
+		throws NoSuchModelException, SystemException {
+		return remove(((Long)primaryKey).longValue());
+	}
+
+	/**
+	 * Removes the user setting with the primary key from the database. Also notifies the appropriate model listeners.
+	 *
 	 * @param userSettingId the primary key of the user setting
 	 * @return the user setting that was removed
 	 * @throws net.sareweb.onddo.NoSuchUserSettingException if a user setting with the primary key could not be found
@@ -210,38 +207,24 @@ public class UserSettingPersistenceImpl extends BasePersistenceImpl<UserSetting>
 	 */
 	public UserSetting remove(long userSettingId)
 		throws NoSuchUserSettingException, SystemException {
-		return remove(Long.valueOf(userSettingId));
-	}
-
-	/**
-	 * Removes the user setting with the primary key from the database. Also notifies the appropriate model listeners.
-	 *
-	 * @param primaryKey the primary key of the user setting
-	 * @return the user setting that was removed
-	 * @throws net.sareweb.onddo.NoSuchUserSettingException if a user setting with the primary key could not be found
-	 * @throws SystemException if a system exception occurred
-	 */
-	@Override
-	public UserSetting remove(Serializable primaryKey)
-		throws NoSuchUserSettingException, SystemException {
 		Session session = null;
 
 		try {
 			session = openSession();
 
 			UserSetting userSetting = (UserSetting)session.get(UserSettingImpl.class,
-					primaryKey);
+					Long.valueOf(userSettingId));
 
 			if (userSetting == null) {
 				if (_log.isWarnEnabled()) {
-					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + userSettingId);
 				}
 
 				throw new NoSuchUserSettingException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
-					primaryKey);
+					userSettingId);
 			}
 
-			return remove(userSetting);
+			return userSettingPersistence.remove(userSetting);
 		}
 		catch (NoSuchUserSettingException nsee) {
 			throw nsee;
@@ -252,6 +235,19 @@ public class UserSettingPersistenceImpl extends BasePersistenceImpl<UserSetting>
 		finally {
 			closeSession(session);
 		}
+	}
+
+	/**
+	 * Removes the user setting from the database. Also notifies the appropriate model listeners.
+	 *
+	 * @param userSetting the user setting
+	 * @return the user setting that was removed
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public UserSetting remove(UserSetting userSetting)
+		throws SystemException {
+		return super.remove(userSetting);
 	}
 
 	@Override
@@ -273,7 +269,16 @@ public class UserSettingPersistenceImpl extends BasePersistenceImpl<UserSetting>
 			closeSession(session);
 		}
 
-		clearCache(userSetting);
+		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
+		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
+
+		UserSettingModelImpl userSettingModelImpl = (UserSettingModelImpl)userSetting;
+
+		FinderCacheUtil.removeResult(FINDER_PATH_FETCH_BY_USERID,
+			new Object[] { Long.valueOf(userSettingModelImpl.getUserId()) });
+
+		EntityCacheUtil.removeResult(UserSettingModelImpl.ENTITY_CACHE_ENABLED,
+			UserSettingImpl.class, userSetting.getPrimaryKey());
 
 		return userSetting;
 	}
@@ -712,7 +717,7 @@ public class UserSettingPersistenceImpl extends BasePersistenceImpl<UserSetting>
 		throws NoSuchUserSettingException, SystemException {
 		UserSetting userSetting = findByUserId(userId);
 
-		remove(userSetting);
+		userSettingPersistence.remove(userSetting);
 	}
 
 	/**
@@ -722,7 +727,7 @@ public class UserSettingPersistenceImpl extends BasePersistenceImpl<UserSetting>
 	 */
 	public void removeAll() throws SystemException {
 		for (UserSetting userSetting : findAll()) {
-			remove(userSetting);
+			userSettingPersistence.remove(userSetting);
 		}
 	}
 

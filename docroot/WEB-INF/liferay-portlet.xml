@@ -8,9 +8,9 @@
 		<icon>/icon.png</icon>
 		<instanceable>false</instanceable>
 		<header-portlet-css>/css/main.css</header-portlet-css>
-		<footer-portlet-javascript>
-			/js/main.js
-		</footer-portlet-javascript>
+		<header-portlet-css>/css/listportlet.css</header-portlet-css>
+		<footer-portlet-javascript>/js/main.js</footer-portlet-javascript>
+		<footer-portlet-javascript>/js/map.js</footer-portlet-javascript>
 		<css-class-wrapper>listportlet-portlet</css-class-wrapper>
 	</portlet>
 	<role-mapper>

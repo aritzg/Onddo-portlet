@@ -39,6 +39,11 @@ public abstract class PickingBaseImpl extends PickingModelImpl
 	 * Never modify or reference this class directly. All methods that expect a picking model instance should use the {@link Picking} interface instead.
 	 */
 	public void persist() throws SystemException {
-		PickingLocalServiceUtil.updatePicking(this);
+		if (this.isNew()) {
+			PickingLocalServiceUtil.addPicking(this);
+		}
+		else {
+			PickingLocalServiceUtil.updatePicking(this);
+		}
 	}
 }

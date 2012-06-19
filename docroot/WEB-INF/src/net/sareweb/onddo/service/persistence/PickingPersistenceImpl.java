@@ -172,6 +172,17 @@ public class PickingPersistenceImpl extends BasePersistenceImpl<Picking>
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 	}
 
+	@Override
+	public void clearCache(List<Picking> pickings) {
+		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
+		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
+
+		for (Picking picking : pickings) {
+			EntityCacheUtil.removeResult(PickingModelImpl.ENTITY_CACHE_ENABLED,
+				PickingImpl.class, picking.getPrimaryKey());
+		}
+	}
+
 	/**
 	 * Creates a new picking with the primary key. Does not add the picking to the database.
 	 *
@@ -190,20 +201,6 @@ public class PickingPersistenceImpl extends BasePersistenceImpl<Picking>
 	/**
 	 * Removes the picking with the primary key from the database. Also notifies the appropriate model listeners.
 	 *
-	 * @param primaryKey the primary key of the picking
-	 * @return the picking that was removed
-	 * @throws com.liferay.portal.NoSuchModelException if a picking with the primary key could not be found
-	 * @throws SystemException if a system exception occurred
-	 */
-	@Override
-	public Picking remove(Serializable primaryKey)
-		throws NoSuchModelException, SystemException {
-		return remove(((Long)primaryKey).longValue());
-	}
-
-	/**
-	 * Removes the picking with the primary key from the database. Also notifies the appropriate model listeners.
-	 *
 	 * @param pickingId the primary key of the picking
 	 * @return the picking that was removed
 	 * @throws net.sareweb.onddo.NoSuchPickingException if a picking with the primary key could not be found
@@ -211,24 +208,37 @@ public class PickingPersistenceImpl extends BasePersistenceImpl<Picking>
 	 */
 	public Picking remove(long pickingId)
 		throws NoSuchPickingException, SystemException {
+		return remove(Long.valueOf(pickingId));
+	}
+
+	/**
+	 * Removes the picking with the primary key from the database. Also notifies the appropriate model listeners.
+	 *
+	 * @param primaryKey the primary key of the picking
+	 * @return the picking that was removed
+	 * @throws net.sareweb.onddo.NoSuchPickingException if a picking with the primary key could not be found
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public Picking remove(Serializable primaryKey)
+		throws NoSuchPickingException, SystemException {
 		Session session = null;
 
 		try {
 			session = openSession();
 
-			Picking picking = (Picking)session.get(PickingImpl.class,
-					Long.valueOf(pickingId));
+			Picking picking = (Picking)session.get(PickingImpl.class, primaryKey);
 
 			if (picking == null) {
 				if (_log.isWarnEnabled()) {
-					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + pickingId);
+					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 				}
 
 				throw new NoSuchPickingException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
-					pickingId);
+					primaryKey);
 			}
 
-			return pickingPersistence.remove(picking);
+			return remove(picking);
 		}
 		catch (NoSuchPickingException nsee) {
 			throw nsee;
@@ -239,18 +249,6 @@ public class PickingPersistenceImpl extends BasePersistenceImpl<Picking>
 		finally {
 			closeSession(session);
 		}
-	}
-
-	/**
-	 * Removes the picking from the database. Also notifies the appropriate model listeners.
-	 *
-	 * @param picking the picking
-	 * @return the picking that was removed
-	 * @throws SystemException if a system exception occurred
-	 */
-	@Override
-	public Picking remove(Picking picking) throws SystemException {
-		return super.remove(picking);
 	}
 
 	@Override
@@ -271,11 +269,7 @@ public class PickingPersistenceImpl extends BasePersistenceImpl<Picking>
 			closeSession(session);
 		}
 
-		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
-		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
-
-		EntityCacheUtil.removeResult(PickingModelImpl.ENTITY_CACHE_ENABLED,
-			PickingImpl.class, picking.getPrimaryKey());
+		clearCache(picking);
 
 		return picking;
 	}
@@ -926,7 +920,7 @@ public class PickingPersistenceImpl extends BasePersistenceImpl<Picking>
 	 */
 	public void removeByUserId(long userId) throws SystemException {
 		for (Picking picking : findByUserId(userId)) {
-			pickingPersistence.remove(picking);
+			remove(picking);
 		}
 	}
 
@@ -937,7 +931,7 @@ public class PickingPersistenceImpl extends BasePersistenceImpl<Picking>
 	 */
 	public void removeAll() throws SystemException {
 		for (Picking picking : findAll()) {
-			pickingPersistence.remove(picking);
+			remove(picking);
 		}
 	}
 
